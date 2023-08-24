@@ -22,19 +22,23 @@ class DatasetBase():
         original_text = str(text).lower()
         tok = original_text.split(' ')
         text = u''
-        for x in tok:
-            if len(keyword) > 0:
-                if x not in keyword: continue
-            elif len(stopwords) > 0:
-                if len(x) == 0:
-                    continue
-                elif x[0:4] == 'http' or x[0:5] == 'https':
-                    continue
-                elif x[0] == '@':
-                    continue
-                elif x in stopwords:
-                    continue
-            text = text + ' ' + x
+        if len(tok) == 1:
+            for x in tok:
+                text = text + ' ' + x
+        else:
+            for x in tok:
+                if len(keyword) > 0:
+                    if x not in keyword: continue
+                elif len(stopwords) > 0:
+                    if len(x) == 0:
+                        continue
+                    elif x[0:4] == 'http' or x[0:5] == 'https':
+                        continue
+                    elif x[0] == '@':
+                        continue
+                    elif x in stopwords:
+                        continue
+                text = text + ' ' + x
         translate_to = u' '
 
         word_sep = u" ,.?:;'\"/<>`!$%^&*()-=+~[]\\|{}()\n\t" \
@@ -45,7 +49,6 @@ class DatasetBase():
         translate_table = dict((ord(char), translate_to) for char in word_sep)
         tokens = text.translate(translate_table).split(' ')
         return ' '.join(sorted(list(filter(self.lenFilter, tokens))))
-
     # from rawTweet to clean keyword text
     def textProcess(self, data, keyword_path, stopword_path, kthreshold, uthreshold):
         stopwords = []
